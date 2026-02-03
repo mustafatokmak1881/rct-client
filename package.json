@@ -13,7 +13,6 @@
     "ws": "^8.18.3",
     "xmlhttprequest-ssl": "^2.1.2"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
