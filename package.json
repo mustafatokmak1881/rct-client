@@ -1,6 +1,6 @@
 {
   "name": "rct-client",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Remote Command App",
   "main": "index.js",
   "dependencies": {
