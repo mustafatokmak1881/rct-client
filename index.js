@@ -136,12 +136,22 @@ class RemoteTerminalClient {
 
 module.exports = RemoteTerminalClient;
 
-// Auto-start when required from example.js
-// Detect if called from example.js using module.parent check
-if (module.parent && module.parent.filename && module.parent.filename.includes('example.js')) {
+// Auto-start when module is required
+// Skip auto-start if RCT_AUTO_START=false (useful for NestJS or other frameworks)
+if (process.env.RCT_AUTO_START !== 'false') {
   const client = new RemoteTerminalClient({
     host: process.env.RTC_HOST || "umaigames.com",
     port: parseInt(process.env.RTC_PORT) || 80,
+    onConnect: (socketId, terminalId) => {
+      console.log("Connected:", socketId);
+      console.log("Terminal ID:", terminalId);
+    },
+    onDisconnect: (reason) => {
+      console.log("Disconnected:", reason);
+    },
+    onError: (error) => {
+      console.error("Error:", error.message || error);
+    }
   });
 
   client.connect();
