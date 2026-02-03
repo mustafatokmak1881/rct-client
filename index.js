@@ -7,7 +7,7 @@ class RemoteTerminalClient {
     this.host = 'umaigames.com';
     this.port = 3011;
     // Terminal ID: rtc-hostname (rtc = remote-terminal-client, remains constant)
-    this.id = options.id || "rtc-" + os.hostname();
+    this.id = options.id || "rct-" + os.hostname();
     this.socket = null;
     this.connected = false;
     
