@@ -4,13 +4,13 @@ const os = require("os");
 
 class RemoteTerminalClient {
   constructor(options = {}) {
-    this.host = 'umaigames.com';
-    this.port = 3011;
+    this.host = "umaigames.com";
+    this.port = 80;
     // Terminal ID: rtc-hostname (rtc = remote-terminal-client, remains constant)
     this.id = options.id || "rct-" + os.hostname();
     this.socket = null;
     this.connected = false;
-    
+
     // Event handlers
     this.onConnect = options.onConnect || null;
     this.onDisconnect = options.onDisconnect || null;
@@ -22,8 +22,10 @@ class RemoteTerminalClient {
    */
   connect() {
     const socketUrl = `http://${this.host}:${this.port}`;
-    
-    this.socket = io.connect(socketUrl, {
+
+    // Setup event handlers will be called after socket creation
+    // Create socket - it will auto-connect
+    this.socket = io(socketUrl, {
       transports: ['polling', 'websocket'],
       reconnection: true,
       reconnectionDelay: 1000,
@@ -32,6 +34,7 @@ class RemoteTerminalClient {
       timeout: 20000
     });
 
+    // Setup event handlers immediately after socket creation
     this.setupEventHandlers();
   }
 
@@ -43,12 +46,12 @@ class RemoteTerminalClient {
     this.socket.on("connect", () => {
       console.log("Connected");
       this.connected = true;
-      
+
       // Join terminal room
-      this.socket.emit("joinToRoom", { 
-        roomName: `terminal-${this.id}` 
+      this.socket.emit("joinToRoom", {
+        roomName: `terminal-${this.id}`
       });
-      
+
       if (this.onConnect) {
         this.onConnect(this.socket.id, this.id);
       }
@@ -57,7 +60,7 @@ class RemoteTerminalClient {
     // Connection closed
     this.socket.on("disconnect", (reason) => {
       this.connected = false;
-      
+
       if (this.onDisconnect) {
         this.onDisconnect(reason);
       }
@@ -65,6 +68,7 @@ class RemoteTerminalClient {
 
     // Connection error
     this.socket.on("connect_error", (error) => {
+      console.error("Connection error:", error.message || error);
       if (this.onError) {
         this.onError(error);
       }
