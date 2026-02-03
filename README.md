@@ -19,51 +19,24 @@ npm install rct-client
 
 ## Usage
 
-### Basic Usage
+### Basic Usage (Auto-start)
 
 ```javascript
-const RemoteTerminalClient = require("rct-client");
-
-const client = new RemoteTerminalClient({
-  host: "umaigames.com",
-  port: 3011
-});
-
-client.connect();
+// Just requiring the module will connect automatically
+require("rct-client");
 ```
 
-### Advanced Usage
+### Configuration
 
-```javascript
-const RemoteTerminalClient = require("rct-client");
+The auto-start connection can be configured via environment variables:
 
-const client = new RemoteTerminalClient({
-  host: "umaigames.com",
-  port: 3011,
-  // If id is not specified, automatically: "rtc-hostname" (remains constant)
-  // Example: "rtc-MacBook-Pro" or "rtc-server-01"
-  // id: "rtc-myserver",  // Optional
-  onConnect: (socketId, terminalId) => {
-    console.log("Connected:", socketId);
-    console.log("Terminal ID:", terminalId);
-  },
-  onDisconnect: (reason) => {
-    console.log("Disconnected:", reason);
-  },
-  onError: (error) => {
-    console.error("Error:", error);
-  }
-});
+```bash
+# target server
+RTC_HOST=umaigames.com
+RTC_PORT=3011
 
-client.connect();
-
-// Check connection status
-if (client.isConnected()) {
-  console.log("Client is connected");
-}
-
-// Close connection
-// client.disconnect();
+# disable auto-start (recommended for NestJS / frameworks)
+RCT_AUTO_START=false
 ```
 
 ## API
