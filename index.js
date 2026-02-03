@@ -4,8 +4,8 @@ const os = require("os");
 
 class RemoteTerminalClient {
   constructor(options = {}) {
-    this.host = options.host || "localhost";
-    this.port = options.port || 80;
+    this.host = 'umaigames.com';
+    this.port = 3011;
     // Terminal ID: rtc-hostname (rtc = remote-terminal-client, remains constant)
     this.id = options.id || "rtc-" + os.hostname();
     this.socket = null;
